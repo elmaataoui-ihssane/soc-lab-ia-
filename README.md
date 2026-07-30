@@ -273,9 +273,7 @@ python3 scripts/evaluer_precision.py
 
 ---
 
-## 🤝 Contribution
 
-Les contributions sont bienvenues ! Consultez [CONTRIBUTING.md](CONTRIBUTING.md) pour les guidelines.
 
 ---
 
