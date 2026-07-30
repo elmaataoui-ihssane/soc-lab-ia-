@@ -1,0 +1,90 @@
+version: '3.8'
+
+services:
+  # Dashboard Streamlit
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8501:8501"
+    environment:
+      - INDEXER_HOST=https://wazuh-indexer:9200
+      - INDEXER_USER=admin
+      - INDEXER_PASSWORD=admin
+      - OLLAMA_HOST=http://ollama:11434
+      - CHROMA_PATH=./chroma_mitre
+    volumes:
+      - ./chroma_mitre:/app/chroma_mitre
+      - ./agent_graph.py:/app/agent_graph.py
+      - ./dashboard.py:/app/dashboard.py
+      - ./pages:/app/pages
+    depends_on:
+      - ollama
+    networks:
+      - soc-network
+    container_name: soc-dashboard
+
+  # Ollama (LLM local)
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_MODELS=/root/.ollama/models
+    networks:
+      - soc-network
+    container_name: soc-ollama
+    # Télécharger le modèle au démarrage
+    command: sh -c "ollama serve & sleep 5 && ollama pull llama3.2:3b"
+
+  # Chroma Vector Database (optionnel - peut être local)
+  chroma:
+    image: ghcr.io/chroma-core/chroma:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma_data:/chroma/data
+    networks:
+      - soc-network
+    container_name: soc-chroma
+    environment:
+      - IS_PERSISTENT=True
+
+networks:
+  soc-network:
+    driver: bridge
+
+volumes:
+  ollama_data:
+  chroma_data:
+
+# ====================================================================
+# Notes de déploiement
+# ====================================================================
+#
+# 1. Prérequis : Docker & Docker Compose installés
+#
+# 2. Adapter les paramètres Wazuh :
+#    - INDEXER_HOST : IP réelle de votre serveur Wazuh
+#    - INDEXER_USER / INDEXER_PASSWORD
+#
+# 3. Lancer :
+#    docker-compose up -d
+#
+# 4. Accès :
+#    - Dashboard : http://localhost:8501
+#    - Ollama : http://localhost:11434
+#    - Chroma : http://localhost:8000
+#
+# 5. Attendre le téléchargement du modèle (llama3.2:3b ~ 2GB)
+#    docker logs soc-ollama
+#
+# 6. Indexer le corpus MITRE :
+#    docker exec soc-dashboard python3 scripts/indexer_mitre_chroma.py
+#
+# 7. Arrêter :
+#    docker-compose down
+#
