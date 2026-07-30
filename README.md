@@ -288,21 +288,8 @@ MIT License — Voir [LICENSE](LICENSE)
 ## 👥 Auteur
 
 **Elmaataoui Ihssane**  
-Stage d'application — Cybersecurity & Cloud Computing  
+ — Cybersecurity & Cloud Computing  
 ENSAM Casablanca | Juillet 2026
 
 ---
 
-## 🙏 Remerciements
-
-- Groupe MANAGEM (entreprise d'accueil)
-- ENSAM Casablanca
-- Communauté Wazuh, LangChain, et Streamlit
-
----
-
-## 📞 Support
-
-Pour toute question ou problème :
-- 📧 Ouvrir une [Issue](https://github.com/yourusername/soc-lab-ia/issues)
-- 💬 Discussions [Discussions](https://github.com/yourusername/soc-lab-ia/discussions)
